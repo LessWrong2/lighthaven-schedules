@@ -46,9 +46,11 @@ export async function POST(req: Request) {
   const hourStr = hour24Num < 10 ? `0${hour24Num}` : hour24Num.toString();
   const minuteNum = parseInt(rawMinute);
   const minuteStr = minuteNum < 10 ? `0${minuteNum}` : rawMinute;
+  const localTimeZone = dayStartDT.zoneName;
   const startTimeStamp = new Date(
-    `${dayISOFormatted}T${hourStr}:${minuteStr}:00-07:00`
+    `${dayISOFormatted}T${hourStr}:${minuteStr}:00-08:00`
   );
+  console.log(startTimeStamp, new Date(startTimeStamp));
   const session: SessionInsert = {
     Title: title,
     Description: description,
