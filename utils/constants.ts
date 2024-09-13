@@ -9,7 +9,7 @@ export type NavItem = {
 export const CONSTS = {
   TITLE: "Vaelex Not-a-Wedding",
   DESCRIPTION:
-    "An Example Conference is happening from August 23 - 25, 2024 at Lighthaven. Check out the schedules for the main event and afterparty below!",
+    "An unconference to celebrate our relationship! Please add things to the schedule that you'd like to lead!",
   MULTIPLE_EVENTS: false,
   // If you have multiple events, add your events to the nav bar below
   // If you only have one event, you can leave the array empty
