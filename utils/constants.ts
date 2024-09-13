@@ -1,4 +1,4 @@
-import { CakeIcon, UserGroupIcon } from "@heroicons/react/24/outline";
+import  { CakeIcon, UserGroupIcon } from "@heroicons/react/24/outline";
 
 export type NavItem = {
   name: string;
