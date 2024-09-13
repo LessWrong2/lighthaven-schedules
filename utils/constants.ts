@@ -7,7 +7,7 @@ export type NavItem = {
 };
 
 export const CONSTS = {
-  TITLE: "Example Conference Weekend",
+  TITLE: "Vaelex Not-a-Wedding",
   DESCRIPTION:
     "An Example Conference is happening from August 23 - 25, 2024 at Lighthaven. Check out the schedules for the main event and afterparty below!",
   MULTIPLE_EVENTS: false,
