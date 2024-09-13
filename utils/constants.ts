@@ -15,7 +15,7 @@ export const CONSTS = {
   // If you only have one event, you can leave the array empty
   // Find available icons at https://heroicons.com/
   NAV_ITEMS: [
-    { name: "Week 1", href: "/week-1", icon: UserGroupIcon },
+    { name: "Week 1", href: "/week-1", icon: CakeIcon },
     { name: "Week 2", href: "/week-2", icon: CakeIcon },
     { name: "Week 3", href: "/week-3", icon: CakeIcon },
     { name: "Week 4", href: "/week-4", icon: CakeIcon }
