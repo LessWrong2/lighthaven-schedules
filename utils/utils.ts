@@ -12,7 +12,7 @@ export const arraysEqual = (a: any[], b: any[]) =>
   a.length === b.length && a.every((value) => b.includes(value));
 
 export const convertParamDateTime = (date: string, time: string) => {
-  return new Date(`2024-${date}T${time}:00-07:00`);
+  return new Date(`2024-${date}T${time}:00-08:00`);
 };
 
 export const dateOnDay = (date: Date, day: Day) => {
