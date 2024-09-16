@@ -24,8 +24,6 @@ export const CONSTS = {
     <li>Petrov Day party on the 26th of September</li>
     <li>Some kind of weekly authentic-relating game thingy</li>
     <li>A weekly music jam session</li>
-    <li>Some kind of weekly authentic-relating game thingy</li>
-    <li>A weekly music jam session</li>
   </ul>
   <p>But we expect many more to be added in the coming days!</p>
   `,
