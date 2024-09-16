@@ -18,7 +18,7 @@ export default async function SummaryPage(props: { events: Event[] }) {
     <Suspense fallback={<div>Loading...</div>}>
       <div className="mx-auto max-w-2xl">
         <h1 className="text-4xl font-bold mt-5">{CONSTS.TITLE}</h1>
-        <p className="mt-3">{CONSTS.DESCRIPTION}</p>
+        <div className="mt-3 text-sm prose prose-sm max-w-none" dangerouslySetInnerHTML={{ __html: CONSTS.DESCRIPTION }}></div>
         <div className="flex flex-col gap-8 sm:pl-5 mt-10">
           {sortedEvents.map((event) => (
             <div key={event.Name}>
