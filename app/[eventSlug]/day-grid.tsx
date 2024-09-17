@@ -71,7 +71,7 @@ export function DayGrid(props: {
   }, []);
 
   return (
-    <div className="w-full">
+    <div className="w-full" id={DateTime.fromISO(day.Start).toISODate()?.toString()}>
       <div className="flex flex-col">
         <div className="flex items-center gap-2">
           <h2 className="text-2xl font-bold">
