@@ -80,7 +80,7 @@ export function EventDisplay(props: {
       <div className="mb-10 w-full">
         <ScheduleSettings guests={guests} />
       </div>
-      {view !== "grid" && (
+      {!["month", "grid"].includes(view) && (
         <Input
           className="max-w-3xl w-full mb-5 mx-auto"
           placeholder="Search sessions"
