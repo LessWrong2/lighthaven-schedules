@@ -15,7 +15,7 @@ import { Location } from "@/db/locations";
 export function ScheduleSettings(props: { guests: Guest[] }) {
   const { guests } = props;
   const searchParams = useSearchParams();
-  const [view, setView] = useState(searchParams.get("view") ?? "grid");
+  const [view, setView] = useState(searchParams.get("view") ?? "month");
   const urlSearchParams = new URLSearchParams(searchParams);
   const pathname = usePathname();
   const { replace } = useRouter();

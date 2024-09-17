@@ -17,13 +17,17 @@ export function MonthGrid(props: {
 
   // Determine the month and year
   const eventStartDate = DateTime.fromISO(event.Start, { zone: "America/Los_Angeles" });
-  const startOfMonth = eventStartDate.startOf("month");
-  const endOfMonth = eventStartDate.endOf("month");
+  const eventEndDate = DateTime.fromISO(event.End, { zone: "America/Los_Angeles" });
+  const startOfMonth = eventStartDate.startOf("week");
+  const endOfLastWeek = eventEndDate.endOf("week");
+
+  // Calculate the number of empty cells before the first day of the month
+  const emptyDays = startOfMonth.weekday - 1;
 
   // Create an array representing all days in the month
   const daysInMonth = [];
   let currentDate = startOfMonth;
-  while (currentDate <= endOfMonth) {
+  while (currentDate <= endOfLastWeek) {
     daysInMonth.push(currentDate);
     currentDate = currentDate.plus({ days: 1 });
   }
@@ -41,10 +45,15 @@ export function MonthGrid(props: {
   return (
     <div className="grid grid-cols-7 gap-0">
       {/* Render headers for the days of the week */}
-      {["Sun", "Mon", "Tue", "Wed", "Thu", "Fri", "Sat"].map((dayName) => (
+      {["Mon", "Tue", "Wed", "Thu", "Fri", "Sat", "Sun"].map((dayName) => (
         <div key={dayName} className="text-center font-bold text-xs sm:text-sm">
           {dayName}
         </div>
+      ))}
+
+      {/* Render empty cells for days before the month starts */}
+      {Array.from({ length: emptyDays }).map((_, index) => (
+        <div key={`empty-${index}`} className="p-1 sm:p-2 h-24 sm:h-32" />
       ))}
 
       {/* Render day cells */}

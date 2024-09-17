@@ -35,7 +35,7 @@ export function EventDisplay(props: {
       (event["Location names"] && event["Location names"].includes(loc.Name))
   );
   const searchParams = useSearchParams();
-  const view = searchParams.get("view") ?? "grid";
+  const view = searchParams.get("view") ?? "month";
   const router = useRouter();
   const [search, setSearch] = useState("");
   const multipleDays = event["Start"] !== event["End"];
