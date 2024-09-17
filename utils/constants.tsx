@@ -1,4 +1,8 @@
 import  { CakeIcon, UserGroupIcon } from "@heroicons/react/24/outline";
+import Turkey from "../public/turkey.svg";
+import SnowkFlake from "../public/snowflake.svg";
+import Ghost from "../public/ghost.svg";
+import Finite from "../public/finite.svg";
 
 export type NavItem = {
   name: string;
@@ -33,9 +37,9 @@ export const CONSTS = {
   // If you only have one event, you can leave the array empty
   // Find available icons at https://heroicons.com/
   NAV_ITEMS: [
-    { name: "Finite September", href: "/Finite September", icon: UserGroupIcon },
-    { name: "Night Haven", href: "/Night-Haven", icon: UserGroupIcon },
-    { name: "Thank Haven", href: "/Thank-Haven", icon: UserGroupIcon },
-    { name: "Cold Haven", href: "/Cold-Haven", icon: UserGroupIcon }
+    { name: "Finite September", href: "/Finite-September", icon: () => <img {...Finite} width="30px" /> },
+    { name: "Night Haven", href: "/Night-Haven", icon: () => <img {...Ghost} width="20px" /> },
+    { name: "Thank Haven", href: "/Thank-Haven", icon: () => <img {...Turkey} width="30px" /> },
+    { name: "Cold Haven", href: "/Cold-Haven", icon: () => <img {...SnowkFlake} width="20px" /> },
   ] as NavItem[],
 };
