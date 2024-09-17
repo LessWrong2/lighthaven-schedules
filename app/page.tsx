@@ -8,6 +8,7 @@ export default async function Home() {
   const sortedEvents = events.sort((a, b) => {
     return new Date(a.Start).getTime() - new Date(b.Start).getTime();
   });
+  console.log("sortedEvents", sortedEvents, CONSTS.MULTIPLE_EVENTS);
   if (CONSTS.MULTIPLE_EVENTS) {
     return <SummaryPage events={sortedEvents} />;
   } else {

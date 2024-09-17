@@ -8,7 +8,7 @@ export type NavItem = {
 
 export const CONSTS = {
   TITLE: "Eternal September",
-  DESCRIPTION: `<p>Hang out with us for four weeks of inquiry, revelry and rationality.</p>
+  DESCRIPTION: `<p>Hang out with us for three months of inquiry, revelry and rationality.</p>
   
   <p>We are opening up the campus to individuals, and teams booking rooms or common areas for Eternal September.</p>
 
@@ -24,6 +24,7 @@ export const CONSTS = {
     <li>Petrov Day party on the 26th of September</li>
     <li>Some kind of weekly authentic-relating game thingy</li>
     <li>A weekly music jam session</li>
+    <li>A New Year's Eve party</li>
   </ul>
   <p>But we expect many more to be added in the coming days!</p>
   `,

@@ -6,6 +6,7 @@ import {
   DocumentTextIcon,
   FlagIcon,
   TableCellsIcon,
+  CalendarIcon,
 } from "@heroicons/react/24/outline";
 import { UserSelect } from "../user-select";
 import { Guest } from "@/db/guests";
@@ -62,9 +63,14 @@ function SelectView(props: {
       label: "RSVP'd",
       icon: FlagIcon,
     },
+    {
+      name: "month",
+      label: "Month Grid",
+      icon: CalendarIcon, // Use an appropriate icon
+    },
   ];
   return (
-    <div className="flex items-center gap-3">
+    <div className="flex items-center gap-3 flex-wrap">
       {VIEWS.map((v) => (
         <button
           key={v.name}

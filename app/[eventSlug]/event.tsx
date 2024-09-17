@@ -13,6 +13,8 @@ import { Guest } from "@/db/guests";
 import { Location } from "@/db/locations";
 import { RSVP } from "@/db/rsvps";
 import { CONSTS } from "@/utils/constants";
+import { MonthGrid } from "./month-grid";
+import { useRouter } from "next/navigation";
 
 export function EventDisplay(props: {
   event: Event;
@@ -34,8 +36,16 @@ export function EventDisplay(props: {
   );
   const searchParams = useSearchParams();
   const view = searchParams.get("view") ?? "grid";
+  const router = useRouter();
   const [search, setSearch] = useState("");
   const multipleDays = event["Start"] !== event["End"];
+  const handleDayClick = (date: DateTime) => {
+    // Update the search params to show the selected day
+    const params = new URLSearchParams(Array.from(searchParams.entries()));
+    params.set("view", "grid");
+    router.push(`?${params.toString()}#${date.toISODate()}`);
+  };
+
   return (
     <div className="flex flex-col items-start w-full">
       <h1 className="sm:text-4xl text-3xl font-bold mt-5">
@@ -79,26 +89,30 @@ export function EventDisplay(props: {
         />
       )}
       <div className="flex flex-col gap-12 w-full">
-        {daysForEvent.map((day) => (
-          <div key={day.Start}>
-            {view === "grid" ? (
-              <DayGrid
-                day={day}
-                locations={locationsForEvent}
-                guests={guests}
-                rsvps={rsvps}
-                eventName={event.Name}
-              />
-            ) : (
-              <DayText
-                day={day}
-                search={search}
-                locations={locationsForEvent}
-                rsvps={view === "rsvp" ? rsvps : []}
-              />
-            )}
-          </div>
-        ))}
+        {view === "month" ? (
+          <MonthGrid event={event} days={days} onDayClick={handleDayClick} locations={locationsForEvent} />
+        ) : (
+          days.map((day) => (
+            <div key={day.Start}>
+              {view === "grid" ? (
+                <DayGrid
+                  day={day}
+                  locations={locationsForEvent}
+                  guests={guests}
+                  rsvps={rsvps}
+                  eventName={event.Name}
+                />
+              ) : (
+                <DayText
+                  day={day}
+                  search={search}
+                  locations={locationsForEvent}
+                  rsvps={view === "rsvp" ? rsvps : []}
+                />
+              )}
+            </div>
+          ))
+        )}
       </div>
     </div>
   );
