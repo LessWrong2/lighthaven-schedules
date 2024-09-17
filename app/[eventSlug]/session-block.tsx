@@ -14,6 +14,42 @@ import { CurrentUserModal } from "../modals";
 import { UserContext } from "../context";
 import { useScreenWidth } from "@/utils/hooks";
 
+export function SessionInfoDisplay({ session, numRSVPs, formattedHostNames }: {
+  session: Session;
+  numRSVPs: number;
+  formattedHostNames: string;
+}) {
+  return (
+    <>
+      <h1 className="text-lg font-bold leading-tight">{session.Title}</h1>
+      <p className="text-xs text-gray-500 mb-2 mt-1">
+        Hosted by {formattedHostNames}
+      </p>
+      <p className="text-sm whitespace-pre-line">{session.Description}</p>
+      <div className="flex justify-between mt-2 gap-4 text-xs text-gray-500">
+        <div className="flex gap-1">
+          <UserIcon className="h-4 w-4" />
+          <span>
+            {numRSVPs} RSVPs (max capacity {session.Capacity})
+          </span>
+        </div>
+        <div className="flex gap-1">
+          <ClockIcon className="h-4 w-4" />
+          <span>
+            {DateTime.fromISO(session["Start time"])
+              .setZone("America/Los_Angeles")
+              .toFormat("h:mm a")}{" "}
+            -{" "}
+            {DateTime.fromISO(session["End time"])
+              .setZone("America/Los_Angeles")
+              .toFormat("h:mm a")}
+          </span>
+        </div>
+      </div>
+    </>
+  );
+}
+
 export function SessionBlock(props: {
   eventName: string;
   session: Session;
@@ -133,44 +169,15 @@ export function RealSessionCard(props: {
   };
 
   const numRSVPs = session["Num RSVPs"] + (optimisticRSVPResponse ? 1 : 0);
-  const SessionInfoDisplay = () => (
-    <>
-      <h1 className="text-lg font-bold leading-tight">{session.Title}</h1>
-      <p className="text-xs text-gray-500 mb-2 mt-1">
-        Hosted by {formattedHostNames}
-      </p>
-      <p className="text-sm whitespace-pre-line">{session.Description}</p>
-      <div className="flex justify-between mt-2 gap-4 text-xs text-gray-500">
-        <div className="flex gap-1">
-          <UserIcon className="h-4 w-4" />
-          <span>
-            {numRSVPs} RSVPs (max capacity {session.Capacity})
-          </span>
-        </div>
-        <div className="flex gap-1">
-          <ClockIcon className="h-4 w-4" />
-          <span>
-            {DateTime.fromISO(session["Start time"])
-              .setZone("America/Los_Angeles")
-              .toFormat("h:mm a")}{" "}
-            -{" "}
-            {DateTime.fromISO(session["End time"])
-              .setZone("America/Los_Angeles")
-              .toFormat("h:mm a")}
-          </span>
-        </div>
-      </div>
-    </>
-  );
+  
   return (
     <Tooltip
-      content={onMobile ? undefined : <SessionInfoDisplay />}
+      content={onMobile ? undefined : <SessionInfoDisplay session={session} numRSVPs={numRSVPs} formattedHostNames={formattedHostNames} />}
       className={`row-span-${numHalfHours} my-0.5 overflow-hidden group`}
     >
       <CurrentUserModal
         close={() => setRsvpModalOpen(false)}
         open={rsvpModalOpen}
-        // rsvp here should actually be rsvp
         rsvp={() => {
           if (!currentUser) return;
           rsvp(currentUser, session.ID, !!rsvpStatus);
@@ -178,7 +185,7 @@ export function RealSessionCard(props: {
         }}
         guests={guests}
         rsvpd={rsvpStatus}
-        sessionInfoDisplay={<SessionInfoDisplay />}
+        sessionInfoDisplay={<SessionInfoDisplay session={session} numRSVPs={numRSVPs} formattedHostNames={formattedHostNames} />}
       />
       <button
         className={clsx(

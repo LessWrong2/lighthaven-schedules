@@ -3,6 +3,9 @@ import { Event } from "@/db/events";
 import { Session } from "@/db/sessions";
 import { DateTime } from "luxon";
 import { Location } from "@/db/locations";
+import { Tooltip } from "./tooltip";
+import { useScreenWidth } from "@/utils/hooks";
+import { SessionInfoDisplay } from "./session-block";
 
 export function MonthGrid(props: {
   event: Event;
@@ -32,8 +35,8 @@ export function MonthGrid(props: {
     return acc;
   }, {} as Record<string, Day>);
 
-  // Get the first location for each event from the "Location Names"
-  
+  const screenWidth = useScreenWidth();
+  const onMobile = screenWidth < 640;
 
   return (
     <div className="grid grid-cols-7 gap-0">
@@ -57,13 +60,15 @@ export function MonthGrid(props: {
             <div className="text-right text-xs sm:text-sm">{date.day}</div>
             <div className="flex-grow overflow-y-auto">
               {dayEvents.map((session: Session) => (
-                <div 
-                  key={session.ID} 
-                  className={`text-[8px] sm:text-xs bg-${locations.find(location => session["Location name"].includes(location.Name))?.Color ?? "green"}-100 rounded px-0.5 sm:px-1 sm:px-1 mb-0.5 sm:mb-1 truncate`}
-                  title={session.Title}
-                >
-                  {session.Title}
-                </div>
+                <Tooltip key={session.ID} content={onMobile ? undefined : <SessionInfoDisplay session={session} numRSVPs={session["Num RSVPs"]} formattedHostNames={session["Host name"]?.join(", ") ?? "No hosts"} />}>
+                  <div 
+                    key={session.ID}
+                    className={`text-[8px] sm:text-xs bg-${locations.find(location => session["Location name"].includes(location.Name))?.Color ?? "green"}-500 text-white rounded px-0.5 sm:px-1 sm:px-1 mb-0.5 sm:mb-1 truncate`}
+                    title={session.Title}
+                  >
+                    {session.Title}
+                  </div>
+                </Tooltip>
               ))}
             </div>
           </div>
