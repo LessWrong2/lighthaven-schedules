@@ -71,7 +71,7 @@ export function BookableSessionCard(props: {
   const timeParam = DateTime.fromISO(session["Start time"], { zone: 'UTC' })
     .setZone('America/Los_Angeles')
     .toFormat('HH:mm');
-  const eventSlug = eventName.replace(" ", "-");
+  const eventSlug = eventName.replaceAll(" ", "-");
   return (
     <div className={`row-span-${numHalfHours} my-0.5 min-h-10`}>
       <Link

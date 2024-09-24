@@ -32,7 +32,7 @@ export function ScheduleSettings(props: { guests: Guest[] }) {
       </div>
       <div className="flex flex-col gap-1">
         <span className="text-gray-500">Showing schedule for...</span>
-        <UserSelect guests={guests} />
+        <UserSelect guests={guests} multiple={false} />
       </div>
     </div>
   );
