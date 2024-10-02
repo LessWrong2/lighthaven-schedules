@@ -38,35 +38,45 @@ export async function POST(req: Request) {
     startTimeString,
     duration,
   } = (await req.json()) as SessionParams;
-  const dayStartDT = DateTime.fromJSDate(new Date(day.Start));
-  const dayISOFormatted = dayStartDT.toFormat("yyyy-MM-dd");
-  const [rawHour, rawMinute, ampm] = startTimeString.split(/[: ]/);
-  const hourNum = parseInt(rawHour);
-  const hour24Num = ampm === "PM" && hourNum !== 12 ? hourNum + 12 : hourNum;
-  const hourStr = hour24Num < 10 ? `0${hour24Num}` : hour24Num.toString();
-  const minuteNum = parseInt(rawMinute);
-  const minuteStr = minuteNum < 10 ? `0${minuteNum}` : rawMinute;
-  const startTimeStamp = new Date(
-    `${dayISOFormatted}T${hourStr}:${minuteStr}:00-08:00`
-  );
-  console.log(startTimeStamp, new Date(startTimeStamp));
+
+  // Parse the day start date with Luxon in 'America/Los_Angeles' timezone
+  const dayStartDT = DateTime.fromISO(day.Start, { zone: 'America/Los_Angeles' });
+
+  // Combine the date and time strings
+  const dateStr = dayStartDT.toFormat('yyyy-MM-dd');
+  const dateTimeStr = `${dateStr} ${startTimeString}`; // e.g., '2023-12-25 8:30 AM'
+
+  // Parse the combined date and time with Luxon
+  const startDateTime = DateTime.fromFormat(dateTimeStr, 'yyyy-MM-dd h:mm a', { zone: 'America/Los_Angeles' });
+
+  // Check if parsing was successful
+  if (!startDateTime.isValid) {
+    // Handle invalid date error
+    console.error('Invalid start date and time');
+    return Response.error();
+  }
+
+  // Calculate the end time using Luxon
+  const endDateTime = startDateTime.plus({ minutes: duration });
+
   const session: SessionInsert = {
     Title: title,
     Description: description,
     Hosts: hosts.map((host) => host.ID),
     Location: [location.ID],
-    "Start time": startTimeStamp.toISOString(),
-    "End time": new Date(
-      startTimeStamp.getTime() + duration * 60 * 1000
-    ).toISOString(),
+    "Start time": startDateTime.toISO(),
+    "End time": endDateTime.toISO(),
     "Attendee scheduled": true,
   };
+
   if (CONSTS.MULTIPLE_EVENTS && day["Event"]) {
     session.Event = [day["Event"][0]];
   }
+
   console.log(session);
   const existingSessions = await getSessions();
   const sessionValid = validateSession(session, existingSessions);
+
   if (sessionValid) {
     await base("Sessions").create(
       [
