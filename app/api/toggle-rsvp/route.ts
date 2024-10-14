@@ -8,6 +8,14 @@ type RSVPParams = {
 
 export const dynamic = "force-dynamic"; // defaults to auto
 
+async function getRSVPsByUser(guestId: string, sessionId: string) {
+  return await base("RSVPs")
+    .select({
+      filterByFormula: `AND({Guest ID} = "${guestId}", {Session ID} = "${sessionId}")`,
+    })
+    .all();
+}
+
 export async function POST(req: Request) {
   const { sessionId, guestId, remove } = (await req.json()) as RSVPParams;
 
@@ -28,24 +36,22 @@ export async function POST(req: Request) {
         });
       }
     );
+    // Check whether we now have multiple RSVPs for this session and guest
+    const rsvps = await getRSVPsByUser(guestId, sessionId);
+    console.log("RSVPs", { rsvps });
+    if (rsvps.length > 1) {
+      console.log("DUPLICATE RSVPs", { rsvps });
+      // We do, so we need to delete all but one
+      rsvps.slice(1).forEach(async (rsvp: any) => {
+        await base("RSVPs").destroy([rsvp.getId()]);
+      });
+    }
   } else {
     console.log("REMOVING RSVP", { sessionId, guestId });
-    await base("RSVPs")
-      .select({
-        filterByFormula: `AND({Session ID} = "${sessionId}", {Guest ID} = "${guestId}")`,
-      })
-      .eachPage(function page(records: any, fetchNextPage: any) {
-        console.log("RECORDS", { records });
-        records.forEach(function (record: any) {
-          base("RSVPs").destroy([record.getId()], function (err: string) {
-            if (err) {
-              console.error(err);
-              return;
-            }
-          });
-        });
-        fetchNextPage();
-      });
+    const rsvps = await getRSVPsByUser(guestId, sessionId);
+    rsvps.forEach(async (rsvp: any) => {
+      await base("RSVPs").destroy([rsvp.getId()]);
+    });
   }
 
   return Response.json({ success: true });
