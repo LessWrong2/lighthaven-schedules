@@ -113,7 +113,7 @@ export function DayGrid(props: {
                   content={<p className="text-sm p-2">{loc.Description}</p>}
                   placement="bottom-start"
                 >
-                  <div className={clsx("p-1 border-b border-gray-100 flex flex-col justify-between h-full", loc["Keynote track"] === "Unconference" ? "opacity-30 unconf" : "")}>
+                  <div className={clsx("p-1 border-b border-gray-100 flex flex-col justify-between h-full", loc["Keynote track"] === "Unconference" ? "md:opacity-30 unconf" : "")}>
                     <div
                       key={loc.Name}
                       className="flex flex-col justify-between flex-grow"

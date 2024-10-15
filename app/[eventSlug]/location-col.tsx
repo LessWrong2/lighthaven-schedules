@@ -28,7 +28,7 @@ export function LocationCol(props: {
         className={clsx(
           "grid h-full",
           `grid-rows-[repeat(${numHalfHours},44px)]`,
-          location["Keynote track"] === "Unconference" ? "opacity-30 unconf" : ""
+          location["Keynote track"] === "Unconference" ? "md:opacity-30 unconf" : ""
         )}
       >
         {sessionsWithBlanks.map((session) => {

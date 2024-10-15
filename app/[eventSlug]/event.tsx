@@ -44,7 +44,7 @@ export function EventDisplay(props: {
       <div className="flex text-gray-500 text-sm mt-1 gap-5 font-medium">
         <span className="flex gap-1 items-center">
           <CalendarIcon className="h-4 w-4 stroke-2" />
-          <span>
+          <span className="whitespace-nowrap">
             {DateTime.fromFormat(event.Start, "yyyy-MM-dd", {
               zone: "America/Los_Angeles",
             }).toFormat("LLL d")}
