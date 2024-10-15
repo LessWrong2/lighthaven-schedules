@@ -13,6 +13,12 @@ import { Guest } from "@/db/guests";
 import { RSVP } from "@/db/rsvps";
 import { Location } from "@/db/locations";
 
+const keynoteTrackDisplayNames = {
+  "Plenary": "Keynotes",
+  "Track keynote": "Track keynotes",
+  "Unconference": "Unconference",
+}
+
 export function DayGrid(props: {
   eventName: string;
   locations: Location[];
@@ -97,7 +103,8 @@ export function DayGrid(props: {
             <div
               className={clsx(
                 "grid divide-x divide-gray-100 w-full overflow-visible",
-                `grid-cols-[repeat(${numLocations},minmax(120px,2fr))]`
+                `grid-cols-[repeat(${numLocations},minmax(120px,2fr))]`,
+                '[&:has(.unconf:hover)_.unconf]:opacity-100'
               )}
             >
               {includedLocations.map((loc) => (
@@ -106,40 +113,40 @@ export function DayGrid(props: {
                   content={<p className="text-sm p-2">{loc.Description}</p>}
                   placement="bottom-start"
                 >
-                  <div
-                    key={loc.Name}
-                    className="p-1 border-b border-gray-100 flex flex-col justify-between h-full"
-                  >
-                    <div>
-                      <h3 className="font-semibold text-xs sm:text-sm">
-                        {loc.Name}
-                      </h3>
-                      <p className="text-[10px] text-gray-500">
-                        {loc["Area description"] ?? <br />}
-                      </p>
-                      <p className="text-[10px] text-gray-500">
-                        {loc.Capacity ? `max ${loc.Capacity}` : <br />}
-                      </p>
-                    </div>
-                    <Image
+                  <div className={clsx("p-1 border-b border-gray-100 flex flex-col justify-between h-full", loc["Keynote track"] === "Unconference" ? "opacity-30 unconf" : "")}>
+                    <div
                       key={loc.Name}
-                      src={loc["Image url"]}
-                      alt={loc.Name}
-                      className="w-full mt-1 aspect-[4/3]"
-                      style={{ maxHeight: 200 }}
-                      width={500}
-                      height={500}
-                    />
+                      className="flex flex-col justify-between flex-grow"
+                    >
+                      <div>
+                        <h3 className="font-semibold text-xs sm:text-sm">
+                          {loc.Name}
+                        </h3>
+                        <p className="text-[10px] text-gray-500">
+                          {loc["Area description"] ?? <br />}
+                        </p>
+                        <p className="text-[10px] text-gray-500">
+                          {loc.Capacity ? `max ${loc.Capacity}` : <br />}
+                        </p>
+                      </div>
+                      <Image
+                        key={loc.Name}
+                        src={loc["Image url"]}
+                        alt={loc.Name}
+                        className="w-full mt-1 aspect-[4/3]"
+                        style={{ maxHeight: 200 }}
+                        width={500}
+                        height={500}
+                      />
+                    </div>
+                    {loc["Keynote track"] && (
+                      <h4 className="font-semibold text-xs sm:text-sm mb-1 mt-1 [font-variant:small-caps] opacity-80">
+                        {keynoteTrackDisplayNames[loc["Keynote track"]]}
+                      </h4>
+                    )}
                   </div>
                 </Tooltip>
               ))}
-            </div>
-            <div
-              className={clsx(
-                "grid divide-x divide-gray-100 relative w-full",
-                `grid-cols-[repeat(${numLocations},minmax(120px,2fr))]`
-              )}
-            >
               {/* <NowBar start={start} end={end} /> */}
               {includedLocations.map((location) => {
                 if (!location) {

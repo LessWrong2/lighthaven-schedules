@@ -27,7 +27,8 @@ export function LocationCol(props: {
       <div
         className={clsx(
           "grid h-full",
-          `grid-rows-[repeat(${numHalfHours},44px)]`
+          `grid-rows-[repeat(${numHalfHours},44px)]`,
+          location["Keynote track"] === "Unconference" ? "opacity-30 unconf" : ""
         )}
       >
         {sessionsWithBlanks.map((session) => {

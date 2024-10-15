@@ -11,6 +11,7 @@ export type Location = {
   Bookable: boolean;
   Index: number;
   "Area description"?: string;
+  "Keynote track"?: "Plenary" | "Track keynote" | "Unconference";
 };
 export async function getLocations() {
   const locations: Location[] = [];
@@ -26,6 +27,7 @@ export async function getLocations() {
         "Bookable",
         "Index",
         "Area description",
+        "Keynote track",
       ],
       filterByFormula: `{Hidden} = FALSE()`,
       sort: [{ field: "Index", direction: "asc" }],
