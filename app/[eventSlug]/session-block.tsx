@@ -137,7 +137,7 @@ export function RealSessionCard(props: {
     <>
       <h1 className="text-lg font-bold leading-tight">{session.Title}</h1>
       <p className="text-xs text-gray-500 mb-2 mt-1">
-        Hosted by {formattedHostNames}
+        Hosted by {formattedHostNames} in <b>{location?.Name}</b>
       </p>
       <p className="text-sm whitespace-pre-line">{session.Description}</p>
       <div className="flex justify-between mt-2 gap-4 text-xs text-gray-500">
