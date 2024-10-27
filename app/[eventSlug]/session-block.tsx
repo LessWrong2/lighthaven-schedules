@@ -68,10 +68,10 @@ export function BookableSessionCard(props: {
   const dayParam = DateTime.fromISO(session["Start time"])
     .setZone("America/Los_Angeles")
     .toFormat("MM-dd");
-  const timeParam = DateTime.fromISO(session["Start time"])
-    .setZone("America/Los_Angeles")
-    .toFormat("HH:mm");
-  const eventSlug = eventName.replace(" ", "-");
+  const timeParam = DateTime.fromISO(session["Start time"], { zone: 'UTC' })
+    .setZone('America/Los_Angeles')
+    .toFormat('HH:mm');
+  const eventSlug = eventName.replaceAll(" ", "-");
   return (
     <div className={`row-span-${numHalfHours} my-0.5 min-h-10`}>
       <Link

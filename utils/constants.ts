@@ -15,5 +15,5 @@ export const CONSTS = {
   // If you only have one event, you can leave the array empty
   // Find available icons at https://heroicons.com/
   NAV_ITEMS: [
-] as NavItem[],
+  ] as NavItem[],
 };

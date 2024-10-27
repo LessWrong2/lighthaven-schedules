@@ -23,7 +23,7 @@ export const metadata: Metadata = {
   title: CONSTS.TITLE,
   description: CONSTS.DESCRIPTION,
   icons: {
-    icon: "/favicon.ico",
+    icon: "/favicon.svg", 
   },
 };
 

@@ -272,30 +272,39 @@ export function SelectHosts(props: {
   guests: Guest[];
   hosts: Guest[];
   setHosts: (hosts: Guest[]) => void;
+  multiple?: boolean;
 }) {
-  const { guests, hosts, setHosts } = props;
+  const { guests, hosts, setHosts, multiple = true } = props;
   const [query, setQuery] = useState("");
   const filteredGuests = guests
     .filter((guest) =>
-      guest["Name"].toLowerCase().includes(query.toLowerCase())
+      guest.Name.toLowerCase().includes(query.toLowerCase())
     )
-    .filter((guest) => guest["Name"].trim().length > 0)
-    .sort((a, b) => a["Name"].localeCompare(b["Name"]))
+    .filter((guest) => guest.Name.trim().length > 0)
+    .sort((a, b) => a.Name.localeCompare(b.Name))
     .slice(0, 20);
+  const comboBoxProps = (multiple ? {
+    value: hosts,
+    onChange: (newHosts: Guest[]) => {
+      setHosts(newHosts as Guest[]);
+      setQuery("");
+    },
+    multiple: true as true
+  } : {
+    value: hosts[0],
+    onChange: (newHost: Guest) => {
+      setHosts([newHost]);
+      setQuery("");
+    },
+    multiple: false as false
+  }) as any; // Any because hard
   return (
     <div className="w-full">
-      <Combobox
-        value={hosts}
-        onChange={(newHosts) => {
-          setHosts(newHosts);
-          setQuery("");
-        }}
-        multiple
-      >
+      <Combobox {...comboBoxProps}>
         <div className="relative mt-1">
           <Combobox.Button className="relative w-full min-h-12 h-fit rounded-md border px-4 shadow-sm transition-colors focus:outline-none border-gray-300 focus:ring-2 focus:ring-rose-400 focus:outline-0 focus:border-none bg-white py-2 pl-3 pr-10 text-left placeholder:text-gray-400">
             <div className="flex flex-wrap gap-1 items-center">
-              {hosts.length > 0 && (
+              {hosts.length > 0 && multiple && (
                 <>
                   {hosts.map((host) => (
                     <span
@@ -314,17 +323,32 @@ export function SelectHosts(props: {
                   ))}
                 </>
               )}
+              {hosts.length > 0 && !multiple && (
+                <span className="text-sm text-gray-900 flex items-center">
+                  {hosts[0].Name}
+                  <button
+                    onClick={(e) => {
+                      e.stopPropagation();
+                      setHosts([]);
+                    }}
+                    className="ml-2 mt-0.5"
+                  >
+                    <XMarkIcon className="h-3 w-3 text-gray-400" />
+                  </button>
+                </span>
+              )}
               <Combobox.Input
                 onChange={(event) => setQuery(event.target.value)}
                 value={query}
-                className="border-none focus:ring-0 px-0 py-1 text-sm focus:w-fit w-0 placeholder:text-gray-400"
+                placeholder={multiple ? "Type to search..." : ""}
+                className="border-none focus:ring-0 px-0 py-1 text-sm outline-none placeholder:text-gray-400 flex-1"
               />
             </div>
             <div className="absolute inset-y-0 right-0 flex items-center pr-2">
               <ChevronUpDownIcon className="h-5 w-5 text-gray-400" />
             </div>
           </Combobox.Button>
-          <Transition
+          {(multiple || query.length >= 3) && <Transition
             as={Fragment}
             leave="transition ease-in duration-100"
             leaveFrom="opacity-100"
@@ -372,7 +396,7 @@ export function SelectHosts(props: {
                 ))
               )}
             </Combobox.Options>
-          </Transition>
+          </Transition>}
         </div>
       </Combobox>
     </div>
