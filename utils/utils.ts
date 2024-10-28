@@ -1,4 +1,5 @@
 import { Day } from "@/db/days";
+import { DateTime } from "luxon";
 
 export const getPercentThroughDay = (now: Date, start: Date, end: Date) =>
   ((now.getTime() - start.getTime()) / (end.getTime() - start.getTime())) * 100;
@@ -11,9 +12,13 @@ export const getNumHalfHours = (start: Date, end: Date) => {
 export const arraysEqual = (a: any[], b: any[]) =>
   a.length === b.length && a.every((value) => b.includes(value));
 
-export const convertParamDateTime = (date: string, time: string) => {
-  return new Date(`2024-${date}T${time}:00-08:00`);
-};
+export function convertParamDateTime(dayParam: string, timeParam: string) {
+  return DateTime.fromFormat(
+    `${dayParam} ${timeParam}`,
+    'MM-dd HH:mm',
+    { zone: 'America/Los_Angeles' }
+  ).toJSDate();
+}
 
 export const dateOnDay = (date: Date, day: Day) => {
   return (

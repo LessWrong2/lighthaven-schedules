@@ -49,8 +49,8 @@ export function CurrentUserModal(props: {
       {sessionInfoDisplay}
       {
         <div className="mt-2">
-          <span className="text-gray-500">RSVPing as...</span>
-          <UserSelect guests={guests} />
+          <span className="text-gray-500">Type your name to RSVP</span>
+          <UserSelect guests={guests} multiple={false} />
         </div>
       }
       {user && (

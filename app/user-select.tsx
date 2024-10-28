@@ -8,9 +8,11 @@ import { useRouter } from "next/navigation";
 export function UserSelect({
   guests,
   showOnlyWhenUserSet,
+  multiple = true,
 }: {
   guests: Guest[];
   showOnlyWhenUserSet?: boolean;
+  multiple?: boolean;
 }) {
   const { user: currentUser, setUser } = useContext(UserContext);
   const router = useRouter();
@@ -23,6 +25,7 @@ export function UserSelect({
           setUser?.(hosts?.at(-1)!?.ID || null);
           router.refresh();
         }}
+        multiple={multiple}
       />
     )
   );
