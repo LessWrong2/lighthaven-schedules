@@ -33,7 +33,10 @@ export async function getGuestsByEvent(eventName: string) {
     })
     .eachPage(function page(records: any, fetchNextPage: any) {
       records.forEach(function (record: any) {
-        guests.push({ ...record.fields, ID: record.id });
+        const fields = Object.fromEntries(
+          Object.entries(record.fields).map(([key, value]) => [key, value ?? ""])
+        ) as Omit<Guest, "ID">;
+        guests.push({ ...fields, ID: record.id });
       });
       fetchNextPage();
     });
