@@ -4,7 +4,7 @@ import { Location } from "@/db/locations";
 import { Guest } from "@/db/guests";
 import { RSVP } from "@/db/rsvps";
 import { SessionBlock } from "./session-block";
-import { getNumHalfHours } from "@/utils/utils";
+import { getNumHalfHours, getNumTimePeriods } from "@/utils/utils";
 import clsx from "clsx";
 
 export function LocationCol(props: {
@@ -16,18 +16,20 @@ export function LocationCol(props: {
   rsvps: RSVP[];
 }) {
   const { eventName, sessions, location, day, guests, rsvps } = props;
+  const periodLengthMinutes = 10;
   const sessionsWithBlanks = insertBlankSessions(
     sessions,
     new Date(day.Start),
-    new Date(day.End)
+    new Date(day.End),
+    periodLengthMinutes
   );
-  const numHalfHours = getNumHalfHours(new Date(day.Start), new Date(day.End));
+  const numTimePeriods = getNumTimePeriods(new Date(day.Start), new Date(day.End), periodLengthMinutes);
   return (
     <div className={"px-0.5"}>
       <div
         className={clsx(
           "grid h-full",
-          `grid-rows-[repeat(${numHalfHours},44px)]`
+          `grid-rows-[repeat(${numTimePeriods},28px)]`
         )}
       >
         {sessionsWithBlanks.map((session) => {
@@ -54,13 +56,15 @@ export function LocationCol(props: {
 function insertBlankSessions(
   sessions: Session[],
   dayStart: Date,
-  dayEnd: Date
+  dayEnd: Date,
+  periodLengthMinutes: number = 30
 ) {
   const sessionsWithBlanks: Session[] = [];
+  const periodLengthMilliseconds = periodLengthMinutes * 60 * 1000;
   for (
     let currentTime = dayStart.getTime();
     currentTime < dayEnd.getTime();
-    currentTime += 1800000
+    currentTime += periodLengthMilliseconds
   ) {
     const sessionNow = sessions.find((session) => {
       const startTime = new Date(session["Start time"]).getTime();
@@ -76,7 +80,7 @@ function insertBlankSessions(
     } else {
       sessionsWithBlanks.push({
         "Start time": new Date(currentTime).toISOString(),
-        "End time": new Date(currentTime + 1800000).toISOString(),
+        "End time": new Date(currentTime + periodLengthMilliseconds).toISOString(),
         Title: "",
         Description: "",
         Hosts: [],

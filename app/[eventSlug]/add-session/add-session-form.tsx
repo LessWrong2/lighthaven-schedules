@@ -213,6 +213,7 @@ function getAvailableStartTimes(
   location?: string
 ) {
   const locationSelected = !!location;
+  const periodLengthMinutes = 10;
   const filteredSessions = locationSelected
     ? sessions.filter((s) => s["Location name"][0] === location)
     : sessions;
@@ -224,7 +225,7 @@ function getAvailableStartTimes(
   for (
     let t = new Date(day["Start bookings"]).getTime();
     t < new Date(day["End bookings"]).getTime();
-    t += 30 * 60 * 1000
+    t += periodLengthMinutes * 60 * 1000
   ) {
     const formattedTime = DateTime.fromMillis(t)
       .setZone("America/Los_Angeles")
@@ -302,7 +303,7 @@ export function SelectHosts(props: {
     <div className="w-full">
       <Combobox {...comboBoxProps}>
         <div className="relative mt-1">
-          <Combobox.Button className="relative w-full min-h-12 h-fit rounded-md border px-4 shadow-sm transition-colors focus:outline-none border-gray-300 focus:ring-2 focus:ring-rose-400 focus:outline-0 focus:border-none bg-white py-2 pl-3 pr-10 text-left placeholder:text-gray-400">
+          <Combobox.Button className="relative w-full h-fit rounded-md border px-4 shadow-sm transition-colors focus:outline-none border-gray-300 focus:ring-2 focus:ring-rose-400 focus:outline-0 focus:border-none bg-white py-2 pl-3 pr-10 text-left placeholder:text-gray-400">
             <div className="flex flex-wrap gap-1 items-center">
               {hosts.length > 0 && multiple && (
                 <>
@@ -410,10 +411,9 @@ function SelectDuration(props: {
 }) {
   const { duration, setDuration, maxDuration } = props;
   const durations = [
+    { value: 20, label: "15 minutes" },
     { value: 30, label: "30 minutes" },
-    { value: 60, label: "1 hour" },
-    { value: 90, label: "1.5 hours" },
-    { value: 120, label: "2 hours" },
+    { value: 70, label: "70 minutes" },
   ];
   const availableDurations = !!maxDuration
     ? durations.filter(({ value }) => value <= maxDuration)

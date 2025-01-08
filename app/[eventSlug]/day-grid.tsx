@@ -2,7 +2,7 @@
 import { LocationCol } from "./location-col";
 import clsx from "clsx";
 import { useSearchParams } from "next/navigation";
-import { getNumHalfHours, getPercentThroughDay } from "@/utils/utils";
+import { getNumHalfHours, getNumTimePeriods, getPercentThroughDay } from "@/utils/utils";
 import { useSafeLayoutEffect } from "@/utils/hooks";
 import { useRef, useState } from "react";
 import Image from "next/image";
@@ -175,20 +175,21 @@ export function DayGrid(props: {
 
 function TimestampCol(props: { start: Date; end: Date }) {
   const { start, end } = props;
-  const numHalfHours = getNumHalfHours(start, end);
+  const periodLengthMinutes = 10;
+  const numTimePeriods = getNumTimePeriods(start, end, periodLengthMinutes);
   return (
     <div
       className={clsx(
         "grid h-full min-w-14 border-r border-t border-gray-100",
-        `grid-rows-[repeat(${numHalfHours},44px)]`
+        `grid-rows-[repeat(${numTimePeriods},28px)]`
       )}
     >
-      {Array.from({ length: numHalfHours }).map((_, i) => (
+      {Array.from({ length: numTimePeriods }).map((_, i) => (
         <div
           key={i}
-          className="border-b border-gray-100 text-[10px] p-1 text-right h-[44px]"
+          className="border-b border-gray-100 text-[10px] p-1 text-right h-[28px]"
         >
-          {DateTime.fromMillis(start.getTime() + i * 30 * 60 * 1000)
+          {DateTime.fromMillis(start.getTime() + i * periodLengthMinutes * 60 * 1000)
             .setZone("America/Los_Angeles")
             .toFormat("h:mm a")}
         </div>

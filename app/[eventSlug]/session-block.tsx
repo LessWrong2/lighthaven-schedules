@@ -22,11 +22,12 @@ export function SessionBlock(props: {
   guests: Guest[];
   rsvpsForEvent: RSVP[];
 }) {
+  const periodLengthMinutes = 10;
   const { eventName, session, location, day, guests, rsvpsForEvent } = props;
   const startTime = new Date(session["Start time"]).getTime();
   const endTime = new Date(session["End time"]).getTime();
   const sessionLength = endTime - startTime;
-  const numHalfHours = sessionLength / 1000 / 60 / 30;
+  const numTimePeriods = sessionLength / 1000 / 60 / periodLengthMinutes;
   const isBlank = !session.Title;
   const isBookable =
     !!isBlank &&
@@ -39,17 +40,17 @@ export function SessionBlock(props: {
       eventName={eventName}
       session={session}
       location={location}
-      numHalfHours={numHalfHours}
+      numTimePeriods={numTimePeriods}
     />
   ) : (
     <>
       {isBlank ? (
-        <BlankSessionCard numHalfHours={numHalfHours} />
+        <BlankSessionCard numTimePeriods={numTimePeriods} />
       ) : (
         <RealSessionCard
           session={session}
           location={location}
-          numHalfHours={numHalfHours}
+          numTimePeriods={numTimePeriods}
           guests={guests}
           rsvpsForEvent={rsvpsForEvent}
         />
@@ -61,10 +62,10 @@ export function SessionBlock(props: {
 export function BookableSessionCard(props: {
   location: Location;
   session: Session;
-  numHalfHours: number;
+  numTimePeriods: number;
   eventName: string;
 }) {
-  const { numHalfHours, session, location, eventName } = props;
+  const { numTimePeriods, session, location, eventName } = props;
   const dayParam = DateTime.fromISO(session["Start time"])
     .setZone("America/Los_Angeles")
     .toFormat("MM-dd");
@@ -73,7 +74,7 @@ export function BookableSessionCard(props: {
     .toFormat('HH:mm');
   const eventSlug = eventName.replaceAll(" ", "-");
   return (
-    <div className={`row-span-${numHalfHours} my-0.5 min-h-10`}>
+    <div className={`row-span-${numTimePeriods} my-0.5`}>
       <Link
         className="rounded font-roboto h-full w-full bg-gray-100 hover:bg-gray-200 flex items-center justify-center"
         href={`/${eventSlug}/add-session?location=${location.Name}&time=${timeParam}&day=${dayParam}`}
@@ -84,9 +85,9 @@ export function BookableSessionCard(props: {
   );
 }
 
-function BlankSessionCard(props: { numHalfHours: number }) {
-  const { numHalfHours } = props;
-  return <div className={`row-span-${numHalfHours} my-0.5 min-h-12`} />;
+function BlankSessionCard(props: { numTimePeriods: number }) {
+  const { numTimePeriods } = props;
+  return <div className={`row-span-${numTimePeriods} my-0.5`} />;
 }
 
 async function rsvp(guestId: string, sessionId: string, remove = false) {
@@ -102,12 +103,12 @@ async function rsvp(guestId: string, sessionId: string, remove = false) {
 
 export function RealSessionCard(props: {
   session: Session;
-  numHalfHours: number;
+  numTimePeriods: number;
   location: Location;
   guests: Guest[];
   rsvpsForEvent: RSVP[];
 }) {
-  const { session, numHalfHours, location, guests, rsvpsForEvent } = props;
+  const { session, numTimePeriods, location, guests, rsvpsForEvent } = props;
   const { user: currentUser } = useContext(UserContext);
   const [optimisticRSVPResponse, setOptimisticRSVPResponse] = useState<
     boolean | null
@@ -165,7 +166,7 @@ export function RealSessionCard(props: {
   return (
     <Tooltip
       content={onMobile ? undefined : <SessionInfoDisplay />}
-      className={`row-span-${numHalfHours} my-0.5 overflow-hidden group`}
+      className={`row-span-${numTimePeriods} my-0.5 overflow-hidden group`}
     >
       <CurrentUserModal
         close={() => setRsvpModalOpen(false)}
@@ -182,7 +183,7 @@ export function RealSessionCard(props: {
       />
       <button
         className={clsx(
-          "py-1 px-1 rounded font-roboto h-full min-h-10 cursor-pointer flex flex-col relative w-full",
+          "py-1 px-1 rounded font-roboto h-full cursor-pointer flex flex-col relative w-full",
           lowerOpacity
             ? `bg-${location.Color}-${200} border-2 border-${
                 location.Color
@@ -197,7 +198,7 @@ export function RealSessionCard(props: {
         <p
           className={clsx(
             "font-medium text-xs leading-[1.15] text-left",
-            numHalfHours > 1 ? "line-clamp-2" : "line-clamp-1"
+            numTimePeriods > 1 ? "line-clamp-2" : "line-clamp-1"
           )}
         >
           {session.Title}
@@ -205,9 +206,9 @@ export function RealSessionCard(props: {
         <p
           className={clsx(
             "text-[10px] leading-tight text-left ",
-            numHalfHours > 2
+            numTimePeriods > 2
               ? "line-clamp-3"
-              : numHalfHours > 1
+              : numTimePeriods > 1
               ? "line-clamp-2"
               : "line-clamp-1"
           )}
