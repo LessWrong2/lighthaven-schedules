@@ -7,9 +7,9 @@ export type NavItem = {
 };
 
 export const CONSTS = {
-  TITLE: "Example Conference Weekend",
+  TITLE: "Duncon",
   DESCRIPTION:
-    "An Example Conference is happening from August 23 - 25, 2024 at Lighthaven. Check out the schedules for the main event and afterparty below!",
+    '"At the intersection of sense and nonsense." Lighthaven campus in Berkeley, CA, 3/28-3/30, 2025',
   MULTIPLE_EVENTS: false,
   // If you have multiple events, add your events to the nav bar below
   // If you only have one event, you can leave the array empty
