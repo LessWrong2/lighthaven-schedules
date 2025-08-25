@@ -7,9 +7,9 @@ export type NavItem = {
 };
 
 export const CONSTS = {
-  TITLE: "Duncon",
+  TITLE: "Progress Conference 2025 - Hosted by the Roots of Progress Institute",
   DESCRIPTION:
-    '"At the intersection of sense and nonsense." Lighthaven campus in Berkeley, CA, 3/28-3/30, 2025',
+    "A two-day event to connect people & ideas in the progress movement • Berkeley, California",
   MULTIPLE_EVENTS: false,
   // If you have multiple events, add your events to the nav bar below
   // If you only have one event, you can leave the array empty
