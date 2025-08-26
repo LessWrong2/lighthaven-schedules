@@ -6,7 +6,7 @@ import { getNumHalfHours, getNumTimePeriods, getPercentThroughDay } from "@/util
 import { useSafeLayoutEffect } from "@/utils/hooks";
 import { useRef, useState } from "react";
 import Image from "next/image";
-import { Tooltip } from "./tooltip";
+ 
 import { DateTime } from "luxon";
 import { Day } from "@/db/days";
 import { Guest } from "@/db/guests";
@@ -36,6 +36,8 @@ export function DayGrid(props: {
   const [scrolledToLeftEnd, setScrolledToLeftEnd] = useState(true);
   // Now that the festival is over, show entire schedule by default
   const [expanded, setExpanded] = useState(true);
+  // When hovering any bookable room, de-emphasis is lifted for all bookable rooms
+  const [bookableHoverActive, setBookableHoverActive] = useState(false);
   // Or use this to hide dates that have already ended
   // const [expanded, setExpanded] = useState(end >= new Date());
   useSafeLayoutEffect(() => {
@@ -101,37 +103,38 @@ export function DayGrid(props: {
               )}
             >
               {includedLocations.map((loc) => (
-                <Tooltip
+                <div
                   key={loc.Name}
-                  content={<p className="text-sm p-2">{loc.Description}</p>}
-                  placement="bottom-start"
+                  className={clsx(
+                    "p-1 border-b border-gray-100 flex flex-col justify-between h-full transition-colors duration-100",
+                    loc.Bookable && (bookableHoverActive ? "bg-white opacity-100" : "bg-gray-200 opacity-80")
+                  )}
+                  onMouseEnter={loc.Bookable ? () => setBookableHoverActive(true) : undefined}
+                  onMouseLeave={loc.Bookable ? () => setBookableHoverActive(false) : undefined}
                 >
-                  <div
-                    key={loc.Name}
-                    className="p-1 border-b border-gray-100 flex flex-col justify-between h-full"
-                  >
-                    <div>
-                      <h3 className="font-semibold text-xs sm:text-sm">
-                        {loc.Name}
-                      </h3>
-                      <p className="text-[10px] text-gray-500">
-                        {loc["Area description"] ?? <br />}
-                      </p>
-                      <p className="text-[10px] text-gray-500">
-                        {loc.Capacity ? `max ${loc.Capacity}` : <br />}
-                      </p>
-                    </div>
-                    <Image
-                      key={loc.Name}
-                      src={loc["Image url"]}
-                      alt={loc.Name}
-                      className="w-full mt-1 aspect-[4/3]"
-                      style={{ maxHeight: 200 }}
-                      width={500}
-                      height={500}
-                    />
+                  <div>
+                    <h3 className="font-semibold text-xs sm:text-sm">
+                      {loc.Name}
+                    </h3>
+                    <p className="text-[10px] text-gray-500">
+                      {loc["Area description"] ?? <br />}
+                    </p>
+                    <p className="text-[10px] text-gray-500">
+                      {loc.Capacity ? `max ${loc.Capacity}` : <br />}
+                    </p>
+                    <p className="text-[10px] text-gray-600 mt-1 whitespace-pre-line">
+                      {loc.Description}
+                    </p>
                   </div>
-                </Tooltip>
+                  <Image
+                    src={loc["Image url"]}
+                    alt={loc.Name}
+                    className="w-full mt-1 aspect-[4/3]"
+                    style={{ maxHeight: 200 }}
+                    width={500}
+                    height={500}
+                  />
+                </div>
               ))}
             </div>
             <div
@@ -146,17 +149,26 @@ export function DayGrid(props: {
                   return null;
                 }
                 return (
-                  <LocationCol
+                  <div
                     key={location.Name}
-                    sessions={day.Sessions.filter((session) =>
-                      session["Location name"].includes(location.Name)
+                    className={clsx(
+                      location.Bookable && (bookableHoverActive ? "bg-white opacity-100" : "bg-gray-200 opacity-80"),
+                      "transition-colors duration-100"
                     )}
-                    guests={guests}
-                    rsvps={rsvps}
-                    day={day}
-                    location={location}
-                    eventName={eventName}
-                  />
+                    onMouseEnter={location.Bookable ? () => setBookableHoverActive(true) : undefined}
+                    onMouseLeave={location.Bookable ? () => setBookableHoverActive(false) : undefined}
+                  >
+                    <LocationCol
+                      sessions={day.Sessions.filter((session) =>
+                        session["Location name"].includes(location.Name)
+                      )}
+                      guests={guests}
+                      rsvps={rsvps}
+                      day={day}
+                      location={location}
+                      eventName={eventName}
+                    />
+                  </div>
                 );
               })}
             </div>
