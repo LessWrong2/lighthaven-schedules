@@ -175,19 +175,19 @@ export function DayGrid(props: {
 
 function TimestampCol(props: { start: Date; end: Date }) {
   const { start, end } = props;
-  const periodLengthMinutes = 10;
+  const periodLengthMinutes = 30;
   const numTimePeriods = getNumTimePeriods(start, end, periodLengthMinutes);
   return (
     <div
       className={clsx(
         "grid h-full min-w-14 border-r border-t border-gray-100",
-        `grid-rows-[repeat(${numTimePeriods},28px)]`
+        `grid-rows-[repeat(${numTimePeriods},45px)]`
       )}
     >
       {Array.from({ length: numTimePeriods }).map((_, i) => (
         <div
           key={i}
-          className="border-b border-gray-100 text-[10px] p-1 text-right h-[28px]"
+          className="border-b border-gray-100 text-[10px] p-1 text-right h-[45px]"
         >
           {DateTime.fromMillis(start.getTime() + i * periodLengthMinutes * 60 * 1000)
             .setZone("America/Los_Angeles")

@@ -213,7 +213,7 @@ function getAvailableStartTimes(
   location?: string
 ) {
   const locationSelected = !!location;
-  const periodLengthMinutes = 10;
+  const periodLengthMinutes = 30;
   const filteredSessions = locationSelected
     ? sessions.filter((s) => s["Location name"][0] === location)
     : sessions;
@@ -411,9 +411,10 @@ function SelectDuration(props: {
 }) {
   const { duration, setDuration, maxDuration } = props;
   const durations = [
-    { value: 20, label: "15 minutes" },
     { value: 30, label: "30 minutes" },
-    { value: 70, label: "70 minutes" },
+    { value: 60, label: "60 minutes" },
+    { value: 90, label: "90 minutes" },
+    { value: 120, label: "120 minutes" },
   ];
   const availableDurations = !!maxDuration
     ? durations.filter(({ value }) => value <= maxDuration)

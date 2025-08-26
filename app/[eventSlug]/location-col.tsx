@@ -16,7 +16,7 @@ export function LocationCol(props: {
   rsvps: RSVP[];
 }) {
   const { eventName, sessions, location, day, guests, rsvps } = props;
-  const periodLengthMinutes = 10;
+  const periodLengthMinutes = 30;
   const sessionsWithBlanks = insertBlankSessions(
     sessions,
     new Date(day.Start),
@@ -29,7 +29,7 @@ export function LocationCol(props: {
       <div
         className={clsx(
           "grid h-full",
-          `grid-rows-[repeat(${numTimePeriods},28px)]`
+          `grid-rows-[repeat(${numTimePeriods},45px)]`
         )}
       >
         {sessionsWithBlanks.map((session) => {

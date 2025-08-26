@@ -22,7 +22,7 @@ export function SessionBlock(props: {
   guests: Guest[];
   rsvpsForEvent: RSVP[];
 }) {
-  const periodLengthMinutes = 10;
+  const periodLengthMinutes = 30;
   const { eventName, session, location, day, guests, rsvpsForEvent } = props;
   const startTime = new Date(session["Start time"]).getTime();
   const endTime = new Date(session["End time"]).getTime();
