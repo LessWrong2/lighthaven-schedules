@@ -2,7 +2,7 @@
 import { LocationCol } from "./location-col";
 import clsx from "clsx";
 import { useSearchParams } from "next/navigation";
-import { getNumHalfHours, getNumTimePeriods, getPercentThroughDay } from "@/utils/utils";
+import { getNumHalfHours, getNumTimePeriods, getPercentThroughDay, getPeriodLengthMinutesForDay, sortLocationsForDay } from "@/utils/utils";
 import { useSafeLayoutEffect } from "@/utils/hooks";
 import { useRef, useState } from "react";
 import Image from "next/image";
@@ -26,8 +26,9 @@ export function DayGrid(props: {
   const locationsFromParams = locations.filter((loc) =>
     locParams?.includes(loc.Name)
   );
-  const includedLocations =
+  const includedLocationsBase =
     locationsFromParams.length === 0 ? locations : locationsFromParams;
+  const includedLocations = sortLocationsForDay(includedLocationsBase, day);
   const numLocations = includedLocations.length;
   const start = new Date(day.Start);
   const end = new Date(day.End);
@@ -91,7 +92,7 @@ export function DayGrid(props: {
       </div>
       {expanded && (
         <div className="flex items-end relative w-full overflow-visible">
-          <TimestampCol start={start} end={end} />
+          <TimestampCol start={start} end={end} day={day} />
           <div
             className="overflow-x-auto overflow-y-clip flex-shrink"
             ref={scrollableDivRef}
@@ -185,9 +186,9 @@ export function DayGrid(props: {
   );
 }
 
-function TimestampCol(props: { start: Date; end: Date }) {
-  const { start, end } = props;
-  const periodLengthMinutes = 30;
+function TimestampCol(props: { start: Date; end: Date; day: Day }) {
+  const { start, end, day } = props;
+  const periodLengthMinutes = getPeriodLengthMinutesForDay(day);
   const numTimePeriods = getNumTimePeriods(start, end, periodLengthMinutes);
   return (
     <div

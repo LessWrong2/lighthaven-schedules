@@ -4,7 +4,7 @@ import { Location } from "@/db/locations";
 import { Guest } from "@/db/guests";
 import { RSVP } from "@/db/rsvps";
 import { SessionBlock } from "./session-block";
-import { getNumHalfHours, getNumTimePeriods } from "@/utils/utils";
+import { getNumHalfHours, getNumTimePeriods, getPeriodLengthMinutesForDay, getBookingWindowsForDay, isTimestampWithinAnyWindow } from "@/utils/utils";
 import clsx from "clsx";
 
 export function LocationCol(props: {
@@ -16,7 +16,7 @@ export function LocationCol(props: {
   rsvps: RSVP[];
 }) {
   const { eventName, sessions, location, day, guests, rsvps } = props;
-  const periodLengthMinutes = 30;
+  const periodLengthMinutes = getPeriodLengthMinutesForDay(day);
   const sessionsWithBlanks = insertBlankSessions(
     sessions,
     new Date(day.Start),
@@ -61,11 +61,13 @@ function insertBlankSessions(
 ) {
   const sessionsWithBlanks: Session[] = [];
   const periodLengthMilliseconds = periodLengthMinutes * 60 * 1000;
+  const bookingWindows = getBookingWindowsForDay({ Start: dayStart.toISOString(), End: dayEnd.toISOString(), "Start bookings": dayStart.toISOString(), "End bookings": dayEnd.toISOString(), ID: "", Sessions: [] } as any);
   for (
     let currentTime = dayStart.getTime();
     currentTime < dayEnd.getTime();
     currentTime += periodLengthMilliseconds
   ) {
+    const withinBookingWindow = isTimestampWithinAnyWindow(currentTime, bookingWindows);
     const sessionNow = sessions.find((session) => {
       const startTime = new Date(session["Start time"]).getTime();
       const endTime = new Date(session["End time"]).getTime();
@@ -78,20 +80,39 @@ function insertBlankSessions(
         continue;
       }
     } else {
-      sessionsWithBlanks.push({
-        "Start time": new Date(currentTime).toISOString(),
-        "End time": new Date(currentTime + periodLengthMilliseconds).toISOString(),
-        Title: "",
-        Description: "",
-        Hosts: [],
-        "Host name": [],
-        "Host email": "",
-        Location: [],
-        "Location name": [""],
-        Capacity: 0,
-        "Num RSVPs": 0,
-        ID: "",
-      });
+      // Insert blank slots only if bookings are allowed at this time
+      if (withinBookingWindow) {
+        sessionsWithBlanks.push({
+          "Start time": new Date(currentTime).toISOString(),
+          "End time": new Date(currentTime + periodLengthMilliseconds).toISOString(),
+          Title: "",
+          Description: "",
+          Hosts: [],
+          "Host name": [],
+          "Host email": "",
+          Location: [],
+          "Location name": [""],
+          Capacity: 0,
+          "Num RSVPs": 0,
+          ID: "",
+        });
+      } else {
+        // Outside booking windows, leave as non-bookable blanks for spacing
+        sessionsWithBlanks.push({
+          "Start time": new Date(currentTime).toISOString(),
+          "End time": new Date(currentTime + periodLengthMilliseconds).toISOString(),
+          Title: "",
+          Description: "",
+          Hosts: [],
+          "Host name": [],
+          "Host email": "",
+          Location: [],
+          "Location name": [""],
+          Capacity: -1,
+          "Num RSVPs": 0,
+          ID: "",
+        });
+      }
     }
   }
   return sessionsWithBlanks;

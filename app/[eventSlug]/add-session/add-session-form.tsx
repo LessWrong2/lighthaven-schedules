@@ -7,6 +7,7 @@ import { Combobox, Transition } from "@headlessui/react";
 import { CheckIcon, ChevronUpDownIcon } from "@heroicons/react/16/solid";
 import { XMarkIcon } from "@heroicons/react/24/outline";
 import { DateTime } from "luxon";
+import { getPeriodLengthMinutesForDay, getBookingWindowsForDay, isTimestampWithinAnyWindow } from "@/utils/utils";
 import { useRouter, useSearchParams } from "next/navigation";
 import { convertParamDateTime, dateOnDay } from "@/utils/utils";
 import { MyListbox } from "./select";
@@ -123,8 +124,7 @@ export function AddSessionForm(props: {
           <RequiredStar />
         </label>
         <p className="text-sm text-gray-500">
-          You and any cohosts who have agreed to host this session with you. All
-          hosts will get an email confirmation when this form is submitted.
+          You and any cohosts who have agreed to host this session with you.
         </p>
         <SelectHosts guests={guests} hosts={hosts} setHosts={setHosts} />
       </div>
@@ -213,7 +213,7 @@ function getAvailableStartTimes(
   location?: string
 ) {
   const locationSelected = !!location;
-  const periodLengthMinutes = 30;
+  const periodLengthMinutes = getPeriodLengthMinutesForDay(day);
   const filteredSessions = locationSelected
     ? sessions.filter((s) => s["Location name"][0] === location)
     : sessions;
@@ -222,11 +222,15 @@ function getAvailableStartTimes(
       new Date(a["Start time"]).getTime() - new Date(b["Start time"]).getTime()
   );
   const startTimes: StartTime[] = [];
+  const windows = getBookingWindowsForDay(day);
+  const earliest = Math.min(...windows.map(([s]) => s));
+  const latest = Math.max(...windows.map(([_, e]) => e));
   for (
-    let t = new Date(day["Start bookings"]).getTime();
-    t < new Date(day["End bookings"]).getTime();
+    let t = earliest;
+    t < latest;
     t += periodLengthMinutes * 60 * 1000
   ) {
+    const withinWindow = isTimestampWithinAnyWindow(t, windows);
     const formattedTime = DateTime.fromMillis(t)
       .setZone("America/Los_Angeles")
       .toFormat("h:mm a");
@@ -249,12 +253,12 @@ function getAvailableStartTimes(
         );
         const latestEndTime = nextSession
           ? new Date(nextSession["Start time"]).getTime()
-          : new Date(day["End bookings"]).getTime();
+          : latest;
         startTimes.push({
           formattedTime,
           time: t,
           maxDuration: (latestEndTime - t) / 1000 / 60,
-          available: true,
+          available: withinWindow,
         });
       }
     } else {
@@ -262,7 +266,7 @@ function getAvailableStartTimes(
         formattedTime,
         time: t,
         maxDuration: 120,
-        available: true,
+        available: withinWindow,
       });
     }
   }
@@ -341,7 +345,7 @@ export function SelectHosts(props: {
               <Combobox.Input
                 onChange={(event) => setQuery(event.target.value)}
                 value={query}
-                placeholder={multiple ? "Type to search..." : ""}
+                placeholder={"Type 3+ characters to search..."}
                 className="border-none focus:ring-0 px-0 py-1 text-sm outline-none placeholder:text-gray-400 flex-1"
               />
             </div>
@@ -349,7 +353,7 @@ export function SelectHosts(props: {
               <ChevronUpDownIcon className="h-5 w-5 text-gray-400" />
             </div>
           </Combobox.Button>
-          {(multiple || query.length >= 3) && <Transition
+          {(query.length >= 3) && <Transition
             as={Fragment}
             leave="transition ease-in duration-100"
             leaveFrom="opacity-100"

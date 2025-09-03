@@ -13,6 +13,7 @@ import { useContext, useState } from "react";
 import { CurrentUserModal } from "../modals";
 import { UserContext } from "../context";
 import { useScreenWidth } from "@/utils/hooks";
+import { getPeriodLengthMinutesForDay, getBookingWindowsForDay, isTimestampWithinAnyWindow } from "@/utils/utils";
 
 export function SessionBlock(props: {
   eventName: string;
@@ -22,19 +23,19 @@ export function SessionBlock(props: {
   guests: Guest[];
   rsvpsForEvent: RSVP[];
 }) {
-  const periodLengthMinutes = 30;
   const { eventName, session, location, day, guests, rsvpsForEvent } = props;
+  const periodLengthMinutes = getPeriodLengthMinutesForDay(day);
   const startTime = new Date(session["Start time"]).getTime();
   const endTime = new Date(session["End time"]).getTime();
   const sessionLength = endTime - startTime;
   const numTimePeriods = sessionLength / 1000 / 60 / periodLengthMinutes;
   const isBlank = !session.Title;
+  const bookingWindows = getBookingWindowsForDay(day);
   const isBookable =
     !!isBlank &&
     !!location.Bookable &&
     startTime > new Date().getTime() &&
-    startTime >= new Date(day["Start bookings"]).getTime() &&
-    startTime < new Date(day["End bookings"]).getTime();
+    isTimestampWithinAnyWindow(startTime, bookingWindows);
   return isBookable ? (
     <BookableSessionCard
       eventName={eventName}
